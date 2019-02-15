@@ -34,22 +34,22 @@
 			<p>Downloads documents from ethereum blockchain.</p>
 			<div class="form-group">
 				<label for="usr">tx hash to load:</label>
-				<input type="text" id="tx_hash" class="form-control" placeholder="tx hash, e.g: 0x0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef">
+				<input type="text" id="tx_hash" onkeyup="if(event.keyCode==13)btn_click();" class="form-control" placeholder="tx hash, e.g: 0x0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef">
 			</div>
 			<div class="form-group">
 				<label for="usr">Decryption key:</label>
-				<input type="text" id="dec_key" class="form-control" placeholder="key, e.g: 0x0123456789abcdef0123456789abcdef">
+				<input type="text" id="dec_key" onkeyup="if(event.keyCode==13)btn_click();" class="form-control" placeholder="key, e.g: 0x0123456789abcdef0123456789abcdef">
 			</div>
 			<div class="form-group">
 				<label for="usr">Ethereum node link:</label>
-				<input type="text" id="node_url" class="form-control" placeholder="url, e.g: https://link_eth_node.io">
+				<input type="text" id="node_url" onkeyup="if(event.keyCode==13)btn_click();" class="form-control" placeholder="url, e.g: https://link_eth_node.io">
 			</div>
 			<div class="form-group">
 				<input type="submit" id="load_btn" onclick="btn_click();" value="Load file" class="btn btn-secondary" />
 				<img id="loading_gif" src="ressources/loading.gif" height=20 style="display:none;" />
 			</div>
 			<div class="container">
-				<label for="usr" id="filename" style="display:none;">Master_thesis_Stephane_Ballmer.pdf</label>
+				<label for="usr" id="filename" style="display:none;"></label>
 				<embed class="embedded" id="myPdf" height="100%" width="100%" border="0" style="display:none;"></iframe>
 			</div>
 		</div>

@@ -247,9 +247,12 @@ function btn_click()
 				});
 			},
 			function(err){
+				if (err == "TypeError: data is null")
+					console.log("erro caught !!");
+
 				loading.style.display = "none";
 				console.error(err);
-				alert("Error in the data downloading.")
+				alert("Error in the data downloading, the tx (transaction hash) might be wrong.")
 			});
 
 	}).catch(function(err){
