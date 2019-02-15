@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<title>Document downloader</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- jquery -->
+		<script type="text/javascript" src="lib/jquery/js/jquery-3.3.1.min.js"></script>
+<!-- web3 lib -->
+		<script language="javascript" src="lib/web3/js/web3.min_v1.0.0.js"></script>
+<!-- bootstrap lib -->
+		<link rel="stylesheet" href="lib/bootstrap/css/bootstrap.min.css">
+		<script type="text/javascript" src="lib/bootstrap/js/util.js"></script>
+		<script type="text/javascript" src="lib/bootstrap/js/alert.js"></script>
+		<script type="text/javascript" src="lib/bootstrap/js/button.js"></script>
+		<script type="text/javascript" src="lib/bootstrap/js/carousel.js"></script>
+		<script type="text/javascript" src="lib/bootstrap/js/collapse.js"></script>
+		<script type="text/javascript" src="lib/bootstrap/js/modal.js"></script>
+		<script type="text/javascript" src="lib/bootstrap/js/scrollspy.js"></script>
+		<script type="text/javascript" src="lib/bootstrap/js/tab.js"></script>
+		<script type="text/javascript" src="lib/bootstrap/js/popper.js"></script>
+		<script type="text/javascript" src="lib/bootstrap/js/dropdown.js"></script>
+		<script type="text/javascript" src="lib/bootstrap/js/tooltip.js"></script>
+		<script type="text/javascript" src="lib/bootstrap/js/index.js"></script>
+<!-- script -->
+		<link rel="stylesheet" type="text/css" href="css/style.css">
+		<script language="javascript" src="js/script.js"></script>
+	</head>
+	<body>
+		<div class="container container-pad">
+			<h1>Blockchain Document Downloader</h1>
+			<p>Downloads documents from ethereum blockchain.</p>
+			<div class="form-group">
+				<label for="usr">tx hash to load:</label>
+				<input type="text" id="tx_hash" class="form-control" placeholder="tx hash, e.g: 0x0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef">
+			</div>
+			<div class="form-group">
+				<label for="usr">Decryption key:</label>
+				<input type="text" id="dec_key" class="form-control" placeholder="key, e.g: 0x0123456789abcdef0123456789abcdef">
+			</div>
+			<div class="form-group">
+				<label for="usr">Ethereum node link:</label>
+				<input type="text" id="node_url" class="form-control" placeholder="url, e.g: https://link_eth_node.io">
+			</div>
+			<div class="form-group">
+				<input type="submit" id="load_btn" onclick="btn_click();" value="Load file" class="btn btn-secondary" />
+				<img id="loading_gif" src="ressources/loading.gif" height=20 style="display:none;" />
+			</div>
+			<div class="container">
+				<label for="usr" id="filename" style="display:none;">Master_thesis_Stephane_Ballmer.pdf</label>
+				<iframe class="embedded" id="myPdf" height="100%" width="100%" border="0" style="display:none;"></iframe>
+			</div>
+		</div>
+	</body>
+</html>
