@@ -11,12 +11,19 @@ Uint8Array.prototype.toHexString = function() {
 }
 
 // callable from a string composed of hex char and return the ascii string
-// example: "6578616d706c65".toAscii() = "example"
+// example: "6578616d706c65".toAscii() ->  "example"
 String.prototype.toAscii = function() {
   return this.match(/.{1,2}/g).map(function(v){
       return String.fromCharCode(parseInt(v, 16));
     }).join('');
 }
+
+// callable from a string to check if it is only composed of hex char
+// example: "6578616d706c65".isHex() -> true
+String.prototype.isHex = function() {
+	return /^[0-9a-fA-F]+$/.test(this);
+}
+
 
 // AES-GCM encryption
 //	iv: 		Uint8Array with binary initialize vector 
@@ -167,14 +174,10 @@ function download_data(tx, web3, func_then, func_err, hex_data = "", filename_he
 
 function btn_click()
 {
-	var loading = document.getElementById('loading_gif');
-	loading.style.display = "";
-
 	// init vector = binary for "Stephane Ballmer"
 	const iv = '5374657068616e652042616c6c6d6572'.toUint8Array();
 
-	w3 = new Web3(document.getElementById('node_url').value);
-
+	// import tx
 	var tx = validate_hash('tx_hash', 64);
 	if (tx == null)
 	{
@@ -183,6 +186,7 @@ function btn_click()
 		return;
 	}
 
+	// import decryption key
 	var dec_key = validate_hash('dec_key', 32);
 	if (dec_key == null)
 	{
@@ -191,70 +195,88 @@ function btn_click()
 		return;
 	} 
 
-	// raw data
-	download_data("0x" + tx, w3,
-		function(data, filename){
-			console.log("All data loaded, data size:", data.length, "bytes");
+	// create web3 link
+	w3 = new Web3(document.getElementById('node_url').value);
 
-			// import key
-			window.crypto.subtle.importKey(
-				/* data type*/		"raw", 
-				/* private key*/	dec_key.toUint8Array().buffer, 
-				/* algo */			{ name: 'AES-GCM', iv: iv }, 
-				/* extractable */	false, 
-				/* key usage */		["encrypt", "decrypt"]
-			).then(function (key) {
-				// decrypt filename
-				decrypt(iv, key, filename,
-					function(decipher_filename) {
+	// check ethereum node url
+	w3.eth.net.isListening().then(function(val){
 
-						// extract and show filename
-						filename_clear = decipher_filename.toHexString().toAscii()
-						console.log("filename decrypted:", filename_clear);
-						document.getElementById('filename').innerHTML = filename_clear;
-						document.getElementById('filename').style.display = "";
+		var loading = document.getElementById('loading_gif');
+		loading.style.display = "";
 
-						// decrypt full file
-						decrypt(iv, key, data, 
-							function(decipher) {
-								set_pdf_data(decipher, filename_clear); 
-								loading.style.display = "none";
-							}, 
-							function (err) {
-								console.log(err);
-								loading.style.display = "none";
-							});
-					}, 
-					function (err) {
-						console.log(err);
-						loading.style.display = "none";
-					});
+		// raw data
+		download_data("0x" + tx, w3,
+			function(data, filename){
+				console.log("All data loaded, data size:", data.length, "bytes");
+
+				// import key
+				window.crypto.subtle.importKey(
+					/* data type*/		"raw", 
+					/* private key*/	dec_key.toUint8Array().buffer, 
+					/* algo */			{ name: 'AES-GCM', iv: iv }, 
+					/* extractable */	false, 
+					/* key usage */		["encrypt", "decrypt"]
+				).then(function (key) {
+					// decrypt filename
+					decrypt(iv, key, filename,
+						function(decipher_filename) {
+
+							// extract and show filename
+							filename_clear = decipher_filename.toHexString().toAscii()
+							console.log("filename decrypted:", filename_clear);
+							document.getElementById('filename').innerHTML = filename_clear;
+							document.getElementById('filename').style.display = "";
+
+							// decrypt full file
+							decrypt(iv, key, data, 
+								function(decipher) {
+									set_pdf_data(decipher, filename_clear); 
+									loading.style.display = "none";
+								}, 
+								function (err) {
+									console.error(err);
+									loading.style.display = "none";
+									alert("Error in the data decryption, the private key might be wrong.");
+								});
+						}, 
+						function (err) {
+							console.error(err);
+							loading.style.display = "none";
+							alert("Error in the data decryption, the private key might be wrong.");
+						});
+				});
+			},
+			function(err){
+				loading.style.display = "none";
+				console.error(err);
+				alert("Error in the data downloading.")
 			});
-		},
-		function(err){
-			loading.style.display = "none";
-			console.error(err);
-		});
+
+	}).catch(function(err){
+		console.error(err);
+		alert("Error: ethereum node url is invalid.");
+	});
 }
 
 // returns the digest in format 0123456789abcdef from an input id and correct the input if necessary
 function validate_hash(id, size)
 {
-	// hex checker
-	var re = /[0-9A-Fa-f]{6}/g;
+	// String.prototype.isHex = function() {
+	// 	return /^[0-9a-fA-F]+$/.test(this);
+	// }
 
 	// get digest
 	digest = document.getElementById(id).value.trim();
 
 	// check if digest is in format 0x...
-	if (digest.length == (2+size) && digest.startsWith("0x") && re.test(digest.slice(2)))
+	if (digest.length == (2+size) && digest.startsWith("0x") && digest.slice(2).isHex())
 	{
 		document.getElementById(id).value = digest.toLowerCase();
 		return digest.slice(2);
 	}
 
 	// check if digest is still valid but without 0x
-	else if (digest.length == size && re.test(digest))
+	else if (digest.length == size && digest.isHex())
 	{
 		document.getElementById(id).value = "0x" + digest.toLowerCase();
 		return digest;
