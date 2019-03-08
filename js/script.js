@@ -72,8 +72,6 @@ function decrypt(iv, key, data, func_then, func_err)
 // set pdf data with id, from uint8array data
 function set_pdf_data(raw_data, filename, iframe_id='myPdf')
 {
-	//console.log(raw_data.toHexString());
-
 	// create blob object
 	var myBlob = new Blob([raw_data], {type: 'application/pdf'});
 	myBlob.name = filename;
