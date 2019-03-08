@@ -72,21 +72,23 @@ function decrypt(iv, key, data, func_then, func_err)
 // set pdf data with id, from uint8array data
 function set_pdf_data(raw_data, filename, iframe_id='myPdf')
 {
-	// get pdf div
-	var pdf = document.getElementById(iframe_id);
-
-	// show it
-	pdf.style.display = "";
+	//console.log(raw_data.toHexString());
 
 	// create blob object
-	var newBlob = new Blob([raw_data], {type: 'application/pdf'});
-	newBlob.name = filename;
+	var myBlob = new Blob([raw_data], {type: 'application/pdf'});
+	myBlob.name = filename;
 
-	// attached data
-	const data = window.URL.createObjectURL(newBlob);
+	// set pdf iframe data
+	var pdf = document.getElementById(iframe_id);
+	pdf.src = window.URL.createObjectURL(myBlob);
+	pdf.style.display = "";
 
-	// set data
-	pdf.src = data;
+	// generating download link on filename display
+    var el = document.getElementById("filename");
+    el.download = filename
+    el.innerHTML = filename;
+    el.href = URL.createObjectURL(myBlob);
+    el.style.display = "";
 }
 
 function download_data(tx, web3, func_then, func_err, hex_data = "", filename_hex= "")
